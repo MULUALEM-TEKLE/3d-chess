@@ -1,8 +1,14 @@
 import { ChessRank } from '@/app/types/chess-rank'
 import { SquareCell } from './SquareCell'
 import { ChessFile } from '@/app/types/chess-file'
+import { ChessPosition } from '@/app/types/chess-position'
+import { Moves } from '@/app/types/moves'
 
-export function GameBoard() {
+type GameBoardProps = {
+    moves?: Moves
+}
+
+export function GameBoard({ moves }: GameBoardProps) {
     const board = Array(8).fill([
         'A',
         'B',
@@ -19,8 +25,16 @@ export function GameBoard() {
             {board.map((files, rowIndex) => {
                 const rank = (rowIndex + 1) as ChessRank
                 return files.map((file, fileIndex) => {
+                    const isAvailableMove = (moves?.available ?? []).some(
+                        (move) => move.rank === rank && move.file === file
+                    )
+                    const isCaptureMove = (moves?.captures ?? []).some(
+                        (move) => move.rank === rank && move.file === file
+                    )
                     return (
                         <SquareCell
+                            isAvailableMove={isAvailableMove}
+                            isCaptureMove={isCaptureMove}
                             key={`${file}-${rank}`}
                             file={file as ChessFile}
                             rank={rank as ChessRank}

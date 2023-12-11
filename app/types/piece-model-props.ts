@@ -4,4 +4,5 @@ export type PieceModelProps = {
     'position-z': number
     scale: number
     material: THREE.Material
+    onClick: () => void
 }

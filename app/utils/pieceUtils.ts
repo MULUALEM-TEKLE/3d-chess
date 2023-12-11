@@ -1,9 +1,9 @@
 import { Piece } from '@/app/types/piece'
-import { ChessFile } from '../types/chess-file'
-import { ChessRank } from '../types/chess-rank'
+import { pieceMovesUtils } from './pieceMovesUtils'
 
 export const pieceUtils = {
     getPieceStats,
+    getMoves: pieceMovesUtils.getPieceMoves,
 }
 
 const stats = {
@@ -36,29 +36,3 @@ const stats = {
 function getPieceStats(piece: Piece) {
     return stats[piece]
 }
-
-function moves(piece: Piece, file: ChessFile, rank: ChessRank) {
-    switch (piece) {
-        case 'rook':
-            return movesRook(file, rank)
-    }
-}
-
-function movesRook(file: ChessFile, rank: ChessRank) {
-    const moves = []
-    for (let i = 0; i < 8; i++) {
-        const files = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-        if (i !== rank) moves.push({ file, rank: i + 1 })
-        if (files[i] !== file) moves.push({ file: files[i], rank })
-    }
-    return moves
-}
-
-// function movesKnight(file: ChessFile, rank: ChessRank) {
-//     const moves = []
-//     for (let i = 0; i < 8; i++) {
-//         const files = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
-
-//     }
-//     return moves
-// }

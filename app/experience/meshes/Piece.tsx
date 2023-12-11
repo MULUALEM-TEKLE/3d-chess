@@ -13,15 +13,22 @@ import { Knight } from './pieces/Knight'
 import { Rook } from './pieces/Rook'
 import { Pawn } from './pieces/Pawn'
 import * as THREE from 'three'
+import { PieceStatus } from '@/app/types/piece-status'
+import { PieceData } from '@/app/types/piece-data'
+import { on } from 'events'
 
 export type PieceProps = {
-    rank: ChessRank
-    file: ChessFile
-    piece: TPiece
-    rival: Rival
-}
+    onPieceClick: (piece: PieceData) => void
+} & PieceData
 
-export function Piece({ rank, file, piece, rival }: PieceProps) {
+export function Piece({
+    rank,
+    file,
+    type: piece,
+    rival,
+    isMoved,
+    onPieceClick,
+}: PieceProps) {
     const { positionX, positionZ } = usePiecePosition(rank, file)
 
     const props: PieceModelProps = useMemo(() => {
@@ -34,8 +41,11 @@ export function Piece({ rank, file, piece, rival }: PieceProps) {
             material: new THREE.MeshStandardMaterial({
                 color: rival,
             }),
+            onClick: () => {
+                onPieceClick({ rank, file, type: piece, rival, isMoved })
+            },
         }
-    }, [piece, positionX, positionZ, rival])
+    }, [piece, positionX, positionZ, rival, rank, file, onPieceClick])
 
     switch (piece) {
         case 'king':
