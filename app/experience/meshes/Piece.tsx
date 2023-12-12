@@ -27,25 +27,31 @@ export function Piece({
     type: piece,
     rival,
     isMoved,
+    id,
     onPieceClick,
 }: PieceProps) {
-    const { positionX, positionZ } = usePiecePosition(rank, file)
-
+    const chessPosition = useMemo(() => {
+        return {
+            rank,
+            file,
+        }
+    }, [rank, file])
+    const { x, z } = usePiecePosition(chessPosition, true)
     const props: PieceModelProps = useMemo(() => {
         const { positionY, scale } = pieceUtils.getPieceStats(piece)
         return {
-            'position-x': positionX,
+            'position-x': x,
             'position-y': positionY,
-            'position-z': positionZ,
+            'position-z': z,
             scale,
             material: new THREE.MeshStandardMaterial({
                 color: rival,
             }),
             onClick: () => {
-                onPieceClick({ rank, file, type: piece, rival, isMoved })
+                onPieceClick({ rank, file, type: piece, rival, isMoved, id })
             },
         }
-    }, [piece, positionX, positionZ, rival, rank, file, onPieceClick])
+    }, [piece, x, z, rival, rank, file, isMoved, onPieceClick, id])
 
     switch (piece) {
         case 'king':

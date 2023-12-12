@@ -24,14 +24,22 @@ export function RivalPieces({
         [_onPieceClick, isHisTurn]
     )
 
-    return pieces.map((piece) => {
-        return (
-            <Piece
-                onPieceClick={onPieceClick}
-                key={`${rival}-${piece.type}-${piece.rank}-${piece.file}`}
-                rival={rival}
-                {...piece}
-            />
-        )
-    })
+    console.log('pieces', pieces)
+
+    return (
+        <>
+            {pieces.map((piece) => {
+                console.log('happend')
+
+                return (
+                    <Piece
+                        onPieceClick={onPieceClick}
+                        key={piece.id}
+                        rival={rival}
+                        {...piece}
+                    />
+                )
+            })}
+        </>
+    )
 }

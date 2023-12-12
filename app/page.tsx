@@ -7,7 +7,11 @@ import { Experience } from './experience/Experience'
 export default function Home() {
     return (
         <div className="home">
-            <Canvas>
+            <Canvas
+                camera={{
+                    position: [8, 8, 8],
+                }}
+            >
                 <Experience />
             </Canvas>
         </div>

@@ -14,11 +14,16 @@ function getPieceMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
     switch (pieceData.type) {
         case 'pawn':
             return _getPawnMoves(pieceData, gameStatus)
-        default:
-            return {
-                available: [],
-                captures: [],
-            }
+        case 'knight':
+            return _getKnightMoves(pieceData, gameStatus)
+        case 'king':
+            return _getKingMoves(pieceData, gameStatus)
+        case 'bishop':
+            return _getBishopMoves(pieceData, gameStatus)
+        case 'rook':
+            return _getRookMoves(pieceData, gameStatus)
+        case 'queen':
+            return _getQueenMoves(pieceData, gameStatus)
     }
 }
 
@@ -31,13 +36,6 @@ function _getPawnMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
     const nextRank = _getRank(pieceData.rank + direction)
     const doubleNextRank =
         !pieceData.isMoved && _getRank(pieceData.rank + 2 * direction)
-
-    console.log({
-        nextRank,
-        doubleNextRank,
-        fileIndex,
-        pieceData,
-    })
 
     const moveRankPosition: ChessPosition | null = nextRank
         ? {
@@ -100,6 +98,323 @@ function _getPawnMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
     return {
         available: available,
         captures: captures,
+    }
+}
+
+function _getKnightMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
+    const fileOptions = _getFileOptions()
+    const fileIndex = fileOptions.indexOf(pieceData.file)
+    const captures: ChessPosition[] = []
+    const available: ChessPosition[] = []
+
+    const leftFile: ChessFile | undefined = fileOptions[fileIndex - 1]
+    const rightFile: ChessFile | undefined = fileOptions[fileIndex + 1]
+    const leftLeftFile: ChessFile | undefined = fileOptions[fileIndex - 2]
+    const rightRightFile: ChessFile | undefined = fileOptions[fileIndex + 2]
+    const nextRank: ChessRank | undefined = _getRank(pieceData.rank + 1)
+    const nextNextRank: ChessRank | undefined = _getRank(pieceData.rank + 2)
+    const previousRank: ChessRank | undefined = _getRank(pieceData.rank - 1)
+    const previousPreviousRank: ChessRank | undefined = _getRank(
+        pieceData.rank - 2
+    )
+
+    const movesOptions = [
+        {
+            file: leftFile,
+            rank: nextNextRank,
+        },
+        {
+            file: leftFile,
+            rank: previousPreviousRank,
+        },
+        {
+            file: rightFile,
+            rank: nextNextRank,
+        },
+        {
+            file: rightFile,
+            rank: previousPreviousRank,
+        },
+        {
+            file: leftLeftFile,
+            rank: nextRank,
+        },
+        {
+            file: leftLeftFile,
+            rank: previousRank,
+        },
+        {
+            file: rightRightFile,
+            rank: nextRank,
+        },
+        {
+            file: rightRightFile,
+            rank: previousRank,
+        },
+    ].filter((move) => move.file && move.rank) as ChessPosition[]
+
+    movesOptions.forEach((move) => {
+        const pieceRival = _positionPiece(move, gameStatus)
+        if (pieceRival && pieceRival !== pieceData.rival) {
+            captures.push(move)
+        } else if (!pieceRival) {
+            available.push(move)
+        }
+    })
+
+    return {
+        available,
+        captures,
+    }
+}
+
+function _getKingMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
+    const fileOptions = _getFileOptions()
+    const fileIndex = fileOptions.indexOf(pieceData.file)
+    const captures: ChessPosition[] = []
+    const available: ChessPosition[] = []
+
+    const leftFile: ChessFile | undefined = fileOptions[fileIndex - 1]
+    const rightFile: ChessFile | undefined = fileOptions[fileIndex + 1]
+    const nextRank: ChessRank | undefined = _getRank(pieceData.rank + 1)
+    const previousRank: ChessRank | undefined = _getRank(pieceData.rank - 1)
+
+    const movesOptions = [
+        {
+            file: leftFile,
+            rank: nextRank,
+        },
+        {
+            file: leftFile,
+            rank: pieceData.rank,
+        },
+        {
+            file: leftFile,
+            rank: previousRank,
+        },
+        {
+            file: pieceData.file,
+            rank: nextRank,
+        },
+        {
+            file: pieceData.file,
+            rank: previousRank,
+        },
+        {
+            file: rightFile,
+            rank: nextRank,
+        },
+        {
+            file: rightFile,
+            rank: pieceData.rank,
+        },
+        {
+            file: rightFile,
+            rank: previousRank,
+        },
+    ].filter((move) => move.file && move.rank) as ChessPosition[]
+
+    movesOptions.forEach((move) => {
+        const pieceRival = _positionPiece(move, gameStatus)
+        if (pieceRival && pieceRival !== pieceData.rival) {
+            captures.push(move)
+        } else if (!pieceRival) {
+            available.push(move)
+        }
+    })
+
+    return {
+        available,
+        captures,
+    }
+}
+
+function _getBishopMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
+    const fileOptions = _getFileOptions()
+    const fileIndex = fileOptions.indexOf(pieceData.file)
+    const captures: ChessPosition[] = []
+    const available: ChessPosition[] = []
+
+    for (let i = 0; i < 8 - fileIndex; i++) {
+        const file = fileOptions[fileIndex + i + 1]
+        const rank = _getRank(pieceData.rank + i + 1)
+        const position: ChessPosition | null =
+            file && rank ? { file, rank } : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    for (let i = 0; i < fileIndex; i++) {
+        const file = fileOptions[fileIndex - i - 1]
+        const rank = _getRank(pieceData.rank - i - 1)
+        const position: ChessPosition | null =
+            file && rank ? { file, rank } : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    for (let i = 0; i < fileIndex; i++) {
+        const file = fileOptions[fileIndex - i - 1]
+        const rank = _getRank(pieceData.rank + i + 1)
+        const position: ChessPosition | null =
+            file && rank ? { file, rank } : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    for (let i = 0; i < 8 - fileIndex; i++) {
+        const file = fileOptions[fileIndex + i + 1]
+        const rank = _getRank(pieceData.rank - i - 1)
+        const position: ChessPosition | null =
+            file && rank ? { file, rank } : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    return {
+        available,
+        captures,
+    }
+}
+
+function _getRookMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
+    const fileOptions = _getFileOptions()
+    const fileIndex = fileOptions.indexOf(pieceData.file)
+    const captures: ChessPosition[] = []
+    const available: ChessPosition[] = []
+
+    for (let i = 0; i < 8 - fileIndex; i++) {
+        const file = fileOptions[fileIndex + i + 1]
+        const position: ChessPosition | null = file
+            ? {
+                  file,
+                  rank: pieceData.rank,
+              }
+            : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    for (let i = 0; i < fileIndex; i++) {
+        const file = fileOptions[fileIndex - i - 1]
+        const position: ChessPosition | null = file
+            ? {
+                  file,
+                  rank: pieceData.rank,
+              }
+            : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    for (let i = 0; i < pieceData.rank - 1; i++) {
+        const rank = _getRank(pieceData.rank - i - 1)
+        const position: ChessPosition | null = rank
+            ? {
+                  file: pieceData.file,
+                  rank,
+              }
+            : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    for (let i = 0; i < 8 - pieceData.rank; i++) {
+        const rank = _getRank(pieceData.rank + i + 1)
+        const position: ChessPosition | null = rank
+            ? {
+                  file: pieceData.file,
+                  rank,
+              }
+            : null
+        if (position) {
+            const pieceRival = _positionPiece(position, gameStatus)
+            if (pieceRival && pieceRival !== pieceData.rival) {
+                captures.push(position)
+                break
+            } else if (!pieceRival) {
+                available.push(position)
+            } else {
+                break
+            }
+        }
+    }
+
+    return {
+        available,
+        captures,
+    }
+}
+
+function _getQueenMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
+    const bishopMoves = _getBishopMoves(pieceData, gameStatus)
+    const rookMoves = _getRookMoves(pieceData, gameStatus)
+    return {
+        available: [...bishopMoves.available, ...rookMoves.available],
+        captures: [...bishopMoves.captures, ...rookMoves.captures],
     }
 }
 

@@ -7,6 +7,7 @@ import { useMemo } from 'react'
 type SquareCellProps = {
     isAvailableMove?: boolean
     isCaptureMove?: boolean
+    onClick: () => void
 } & ChessPosition
 
 export function SquareCell({
@@ -14,8 +15,9 @@ export function SquareCell({
     file,
     isAvailableMove,
     isCaptureMove,
+    onClick,
 }: SquareCellProps) {
-    const { positionX, positionZ } = usePiecePosition(rank, file)
+    const { x, z } = usePiecePosition({ rank, file })
 
     const color = useMemo(() => {
         const isEvenFile = file.charCodeAt(0) % 2 === 0
@@ -25,15 +27,17 @@ export function SquareCell({
         return (isEvenFile && !isEvenRank) || (!isEvenFile && isEvenRank)
             ? 'black'
             : 'white'
-    }, [rank, file, isAvailableMove])
+    }, [rank, file, isAvailableMove, isCaptureMove])
 
     return (
         <mesh
             rotation-x={-Math.PI * 0.5}
             scale={1}
             position-y={-1}
-            position-x={positionX}
-            position-z={positionZ}
+            position-x={x}
+            position-z={z}
+            onClick={onClick}
+            receiveShadow
         >
             <planeGeometry />
             <meshStandardMaterial color={color} />

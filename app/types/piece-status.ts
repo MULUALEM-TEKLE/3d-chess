@@ -7,4 +7,5 @@ export type PieceStatus = {
     rank: ChessRank
     file: ChessFile
     isMoved: boolean
+    id: string
 }

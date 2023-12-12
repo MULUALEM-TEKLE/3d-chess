@@ -6,9 +6,10 @@ import { Moves } from '@/app/types/moves'
 
 type GameBoardProps = {
     moves?: Moves
+    movePiece: (position: ChessPosition) => void
 }
 
-export function GameBoard({ moves }: GameBoardProps) {
+export function GameBoard({ moves, movePiece }: GameBoardProps) {
     const board = Array(8).fill([
         'A',
         'B',
@@ -31,6 +32,13 @@ export function GameBoard({ moves }: GameBoardProps) {
                     const isCaptureMove = (moves?.captures ?? []).some(
                         (move) => move.rank === rank && move.file === file
                     )
+
+                    function onClick() {
+                        if (isAvailableMove || isCaptureMove) {
+                            movePiece({ rank, file })
+                        }
+                    }
+
                     return (
                         <SquareCell
                             isAvailableMove={isAvailableMove}
@@ -38,6 +46,7 @@ export function GameBoard({ moves }: GameBoardProps) {
                             key={`${file}-${rank}`}
                             file={file as ChessFile}
                             rank={rank as ChessRank}
+                            onClick={onClick}
                         />
                     )
                 })
