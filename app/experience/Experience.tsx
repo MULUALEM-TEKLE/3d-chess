@@ -46,7 +46,11 @@ export function Experience() {
             <OrbitControls />
             <Lights />
             <GameBoard movePiece={movePiece} moves={moves} />
-            <Game status={game} onPieceClick={toggleSelectedPiece} />
+            <Game
+                selectedPiece={selectedPiece}
+                status={game}
+                onPieceClick={toggleSelectedPiece}
+            />
         </>
     )
 }

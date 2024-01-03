@@ -13,7 +13,6 @@ export type UsePiecePositionOptions = {
 
 const _options = {
     duration: 500,
-    easing: 'easeInOutQuad',
 }
 
 export function usePiecePosition(
@@ -26,7 +25,6 @@ export function usePiecePosition(
         x: 0,
         z: 0,
     })
-
     const [diffPosition, setDiffPosition] = useState<Position | null>(null)
 
     useEffect(() => {
@@ -41,7 +39,6 @@ export function usePiecePosition(
 
     useEffect(() => {
         if (!isPiece) return
-        console.log(chessPosition)
         const targetX = chessPosition.file.charCodeAt(0) - 64 - 4
         const targetZ = chessPosition.rank - 4
         setTargetPosition({

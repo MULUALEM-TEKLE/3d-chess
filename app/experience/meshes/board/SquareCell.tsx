@@ -37,7 +37,7 @@ export function SquareCell({
             position-x={x}
             position-z={z}
             onClick={onClick}
-            receiveShadow
+            receiveShadow={true}
         >
             <planeGeometry />
             <meshStandardMaterial color={color} />

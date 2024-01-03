@@ -16,9 +16,11 @@ import * as THREE from 'three'
 import { PieceStatus } from '@/app/types/piece-status'
 import { PieceData } from '@/app/types/piece-data'
 import { on } from 'events'
+import { useAddToY } from '@/app/hooks/useAddToY'
 
 export type PieceProps = {
     onPieceClick: (piece: PieceData) => void
+    isSelected: boolean
 } & PieceData
 
 export function Piece({
@@ -28,6 +30,7 @@ export function Piece({
     rival,
     isMoved,
     id,
+    isSelected,
     onPieceClick,
 }: PieceProps) {
     const chessPosition = useMemo(() => {
@@ -37,12 +40,14 @@ export function Piece({
         }
     }, [rank, file])
     const { x, z } = usePiecePosition(chessPosition, true)
+    const addToY = useAddToY(isSelected)
     const props: PieceModelProps = useMemo(() => {
         const { positionY, scale } = pieceUtils.getPieceStats(piece)
         return {
             'position-x': x,
-            'position-y': positionY,
+            'position-y': positionY + addToY,
             'position-z': z,
+            'rotation-y': rival === 'black' ? Math.PI : 0,
             scale,
             material: new THREE.MeshStandardMaterial({
                 color: rival,
@@ -51,7 +56,7 @@ export function Piece({
                 onPieceClick({ rank, file, type: piece, rival, isMoved, id })
             },
         }
-    }, [piece, x, z, rival, rank, file, isMoved, onPieceClick, id])
+    }, [piece, x, z, rival, rank, file, isMoved, onPieceClick, id, addToY])
 
     switch (piece) {
         case 'king':

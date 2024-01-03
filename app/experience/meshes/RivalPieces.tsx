@@ -8,12 +8,14 @@ type RivalPiecesProps = {
     rival: Rival
     isHisTurn: boolean
     onPieceClick: (piece: PieceData) => void
+    selectedPiece: PieceData | null
 } & RivalStatus
 export function RivalPieces({
     rival,
     isHisTurn,
     pieces,
     onPieceClick: _onPieceClick,
+    selectedPiece,
 }: RivalPiecesProps) {
     const onPieceClick = useCallback(
         (piece: PieceData) => {
@@ -24,22 +26,17 @@ export function RivalPieces({
         [_onPieceClick, isHisTurn]
     )
 
-    console.log('pieces', pieces)
-
-    return (
-        <>
-            {pieces.map((piece) => {
-                console.log('happend')
-
-                return (
-                    <Piece
-                        onPieceClick={onPieceClick}
-                        key={piece.id}
-                        rival={rival}
-                        {...piece}
-                    />
-                )
-            })}
-        </>
-    )
+    return pieces.map((piece) => {
+        return (
+            <Piece
+                onPieceClick={onPieceClick}
+                key={piece.id}
+                rival={rival}
+                isSelected={
+                    piece.id === (selectedPiece?.id ?? '') && isHisTurn === true
+                }
+                {...piece}
+            />
+        )
+    })
 }
