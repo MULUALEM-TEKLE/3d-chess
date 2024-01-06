@@ -16,7 +16,7 @@ type CameraPosition = {
 
 const _option = {
     duration: 500,
-    coilRatio: 0.07,
+    coilRatio: 0.1,
 }
 
 export function useCameraPosition(status: GameStatus) {
@@ -59,12 +59,6 @@ export function useCameraPosition(status: GameStatus) {
 
     const changeCameraPosition = useCallback(
         (delta: number, first: Position, second: Position) => {
-            console.log({
-                duration: _option.duration,
-                delta,
-                ratio: delta * _option.duration * 10,
-            })
-
             const stepRatio = delta * _option.duration * 10 // how many steps per second
             const stepDistance = distance / stepRatio // The distance to move per step
             const directionVector: Position = {

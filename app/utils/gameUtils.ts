@@ -1,7 +1,10 @@
 import { GameStatus } from '../types/game-status'
+import { Rival } from '../types/rival'
+import { pieceMovesUtils } from './pieceMovesUtils'
 
 export const gameUtils = {
     newGame,
+    checkIsChecked,
 }
 
 function newGame() {
@@ -239,5 +242,32 @@ function newGame() {
                 },
             ],
         },
+        isCheck: false,
     } as GameStatus
+}
+
+function checkIsChecked(gameStatus: GameStatus, rival: Rival): boolean {
+    const secondRival = rival === 'white' ? 'black' : 'white'
+    const king = gameStatus[rival].pieces.find((piece) => piece.type === 'king')
+    if (!king) return false
+    const kingPosition = {
+        file: king.file,
+        rank: king.rank,
+    }
+
+    return gameStatus[secondRival].pieces.some((piece) => {
+        const pieceData = {
+            ...piece,
+            rival: secondRival as Rival,
+        }
+        const pieceMoves = pieceMovesUtils.getPieceMovesWithUnValid(
+            pieceData,
+            gameStatus
+        )
+        return pieceMoves.captures.some(
+            (move) =>
+                move.file === kingPosition.file &&
+                move.rank === kingPosition.rank
+        )
+    })
 }

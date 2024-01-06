@@ -5,12 +5,73 @@ import { GameStatus } from '../types/game-status'
 import { Moves } from '../types/moves'
 import { PieceData } from '../types/piece-data'
 import { Rival } from '../types/rival'
+import { gameUtils } from './gameUtils'
+
+// TODO: implement Castling, En passant and Pawn Promotion
 
 export const pieceMovesUtils = {
     getPieceMoves,
+    movePiece,
+    getPieceMovesWithUnValid,
+}
+
+function movePiece(
+    pieceData: PieceData,
+    gameStatus: GameStatus,
+    move: ChessPosition
+): GameStatus {
+    const secondRival = pieceData.rival === 'white' ? 'black' : 'white'
+
+    const newGameStatus = {
+        ...gameStatus,
+        [pieceData.rival]: {
+            ...gameStatus[pieceData.rival],
+            pieces: gameStatus[pieceData.rival].pieces.map((piece) =>
+                piece.id === pieceData.id
+                    ? {
+                          ...piece,
+                          rank: move.rank,
+                          file: move.file,
+                          isMoved: true,
+                      }
+                    : piece
+            ),
+        },
+        [secondRival]: {
+            ...gameStatus[secondRival],
+            pieces: gameStatus[secondRival].pieces.filter(
+                (piece) => piece.rank !== move.rank || piece.file !== move.file
+            ),
+        },
+        turn: secondRival as Rival,
+    }
+
+    const isCheck = gameUtils.checkIsChecked(newGameStatus, newGameStatus.turn)
+
+    newGameStatus.isCheck = isCheck
+
+    return newGameStatus
 }
 
 function getPieceMoves(pieceData: PieceData, gameStatus: GameStatus): Moves {
+    const { available, captures } = getPieceMovesWithUnValid(
+        pieceData,
+        gameStatus
+    )
+    return {
+        available: available.filter((move) =>
+            _checkIsMoveValid(pieceData, gameStatus, move)
+        ),
+        captures: captures.filter((move) =>
+            _checkIsMoveValid(pieceData, gameStatus, move)
+        ),
+    }
+}
+
+function getPieceMovesWithUnValid(
+    pieceData: PieceData,
+    gameStatus: GameStatus
+): Moves {
     switch (pieceData.type) {
         case 'pawn':
             return _getPawnMoves(pieceData, gameStatus)
@@ -439,4 +500,13 @@ function _getFileOptions(): ChessFile[] {
 
 function _getRank(rank: number): ChessRank | undefined {
     return rank < 1 || rank > 8 ? undefined : (rank as ChessRank)
+}
+
+function _checkIsMoveValid(
+    pieceData: PieceData,
+    gameStatus: GameStatus,
+    move: ChessPosition
+): boolean {
+    const afterMoveStatus = movePiece(pieceData, gameStatus, move)
+    return !gameUtils.checkIsChecked(afterMoveStatus, pieceData.rival)
 }

@@ -9,11 +9,15 @@ import { gameUtils } from '../utils/gameUtils'
 import { PieceData } from '../types/piece-data'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Moves } from '../types/moves'
-import { useGame } from '../hooks/useGame'
+import { GameActions, useGame } from '../hooks/useGame'
 
-export function Experience() {
+type ExperienceProps = {
+    game: GameStatus
+    gameActions: GameActions
+}
+
+export function Experience({ game, gameActions }: ExperienceProps) {
     const [selectedPiece, setSelectedPiece] = useState<PieceData | null>(null)
-    const [game, gameActions] = useGame()
 
     const moves: Moves | undefined = useMemo(() => {
         if (!selectedPiece) return undefined
@@ -43,7 +47,12 @@ export function Experience() {
 
     return (
         <>
-            <OrbitControls />
+            <OrbitControls
+                enablePan={false}
+                enableZoom={false}
+                maxPolarAngle={Math.PI / 2}
+                enableDamping={false}
+            />
             <Lights />
             <GameBoard movePiece={movePiece} moves={moves} />
             <Game

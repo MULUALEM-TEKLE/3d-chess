@@ -4,4 +4,5 @@ export type GameStatus = {
     turn: 'black' | 'white'
     black: RivalStatus
     white: RivalStatus
+    isCheck: boolean
 }

@@ -43,6 +43,7 @@ export function Piece({
     const addToY = useAddToY(isSelected)
     const props: PieceModelProps = useMemo(() => {
         const { positionY, scale } = pieceUtils.getPieceStats(piece)
+        const color = rival === 'black' ? '#ad734f' : '#ffffff'
         return {
             'position-x': x,
             'position-y': positionY + addToY,
@@ -50,7 +51,7 @@ export function Piece({
             'rotation-y': rival === 'black' ? Math.PI : 0,
             scale,
             material: new THREE.MeshStandardMaterial({
-                color: rival,
+                color: color,
             }),
             onClick: () => {
                 onPieceClick({ rank, file, type: piece, rival, isMoved, id })

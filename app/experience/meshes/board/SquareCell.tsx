@@ -25,7 +25,7 @@ export function SquareCell({
         if (isCaptureMove) return 'red'
         if (isAvailableMove) return 'green'
         return (isEvenFile && !isEvenRank) || (!isEvenFile && isEvenRank)
-            ? 'black'
+            ? '#ad734f'
             : 'white'
     }, [rank, file, isAvailableMove, isCaptureMove])
 
@@ -38,6 +38,7 @@ export function SquareCell({
             position-z={z}
             onClick={onClick}
             receiveShadow={true}
+            castShadow={true}
         >
             <planeGeometry />
             <meshStandardMaterial color={color} />
