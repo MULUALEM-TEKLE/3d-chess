@@ -47,9 +47,8 @@ function movePiece(
     }
 
     const isCheck = gameUtils.checkIsChecked(newGameStatus, newGameStatus.turn)
-
-    newGameStatus.isCheck = isCheck
-
+    if (isCheck) newGameStatus.situation = 'check'
+    else newGameStatus.situation = 'active'
     return newGameStatus
 }
 

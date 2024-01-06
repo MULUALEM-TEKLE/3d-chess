@@ -1,8 +1,9 @@
+import { useMemo } from 'react'
 import { GameActions } from '../hooks/useGame'
 import { GameStatus } from '../types/game-status'
-import { Turn } from './components/Turn'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons'
+import { Data } from './components/Data'
+import { Options } from './components/Options'
+import { StartMenu } from './components/StartMenu'
 
 type ControlsProps = {
     game: GameStatus
@@ -10,14 +11,20 @@ type ControlsProps = {
 }
 
 export function Controls({ game, gameActions }: ControlsProps) {
+    const isGameStart = useMemo(() => {
+        return game.situation !== 'inactive'
+    }, [game.situation])
+
     return (
         <div className="controls">
-            <Turn turn={game.turn} />
-            <div className="options">
-                <button onClick={gameActions.reset}>
-                    <FontAwesomeIcon icon={faArrowsRotate} />
-                </button>
-            </div>
+            {isGameStart ? (
+                <>
+                    <Data game={game} />
+                    <Options gameActions={gameActions} />
+                </>
+            ) : (
+                <StartMenu gameActions={gameActions} />
+            )}
         </div>
     )
 }

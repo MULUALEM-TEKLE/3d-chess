@@ -242,7 +242,7 @@ function newGame() {
                 },
             ],
         },
-        isCheck: false,
+        situation: 'inactive',
     } as GameStatus
 }
 

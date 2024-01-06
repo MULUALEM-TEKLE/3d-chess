@@ -1,8 +1,10 @@
+import { GameSituation } from './game-situation'
+import { Rival } from './rival'
 import { RivalStatus } from './rival-status'
 
 export type GameStatus = {
-    turn: 'black' | 'white'
+    turn: Rival
     black: RivalStatus
     white: RivalStatus
-    isCheck: boolean
+    situation: GameSituation
 }

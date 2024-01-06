@@ -7,6 +7,7 @@ import { pieceMovesUtils } from '../utils/pieceMovesUtils'
 
 export type GameActions = {
     movePiece: (selectedPiece: PieceData, position: ChessPosition) => void
+    startGame: () => void
     reset: () => void
 }
 
@@ -27,17 +28,16 @@ export function useGame() {
         setStatus(gameUtils.newGame())
     }
 
-    useEffect(() => {
-        if (status.isCheck) {
-            alert('check')
-        }
-    }, [status])
+    const startGame = () => {
+        setStatus({ ...gameUtils.newGame(), situation: 'active' })
+    }
 
     return [
         status,
         {
             movePiece,
             reset,
+            startGame,
         } as GameActions,
     ] as const
 }
