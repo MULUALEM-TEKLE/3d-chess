@@ -11,7 +11,7 @@ export default function Home() {
     const [game, gameActions] = useGame()
 
     const isGameStart = useMemo(() => {
-        return game.situation !== 'inactive'
+        return game.situation !== 'inactive' && game.situation !== 'checkmate'
     }, [game.situation])
 
     return (

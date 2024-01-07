@@ -18,7 +18,8 @@ export const pieceMovesUtils = {
 function movePiece(
     pieceData: PieceData,
     gameStatus: GameStatus,
-    move: ChessPosition
+    move: ChessPosition,
+    changeSituation = true
 ): GameStatus {
     const secondRival = pieceData.rival === 'white' ? 'black' : 'white'
 
@@ -44,11 +45,24 @@ function movePiece(
             ),
         },
         turn: secondRival as Rival,
+        situation: gameStatus.situation,
     }
 
-    const isCheck = gameUtils.checkIsChecked(newGameStatus, newGameStatus.turn)
-    if (isCheck) newGameStatus.situation = 'check'
-    else newGameStatus.situation = 'active'
+    if (changeSituation) {
+        const isCheck = gameUtils.checkIsChecked(
+            newGameStatus,
+            newGameStatus.turn
+        )
+        if (isCheck) {
+            const isCheckmate = gameUtils.checkCheckedIsCheckmate(
+                newGameStatus,
+                newGameStatus.turn
+            )
+
+            if (isCheckmate) newGameStatus.situation = 'checkmate'
+            else newGameStatus.situation = 'check'
+        } else newGameStatus.situation = 'active'
+    }
     return newGameStatus
 }
 
@@ -506,6 +520,6 @@ function _checkIsMoveValid(
     gameStatus: GameStatus,
     move: ChessPosition
 ): boolean {
-    const afterMoveStatus = movePiece(pieceData, gameStatus, move)
+    const afterMoveStatus = movePiece(pieceData, gameStatus, move, false)
     return !gameUtils.checkIsChecked(afterMoveStatus, pieceData.rival)
 }

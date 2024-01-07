@@ -4,6 +4,7 @@ import { GameStatus } from '../types/game-status'
 import { Data } from './components/Data'
 import { Options } from './components/Options'
 import { StartMenu } from './components/StartMenu'
+import { EndMenu } from './components/EndMenu'
 
 type ControlsProps = {
     game: GameStatus
@@ -15,16 +16,22 @@ export function Controls({ game, gameActions }: ControlsProps) {
         return game.situation !== 'inactive'
     }, [game.situation])
 
+    const isCheckmate = useMemo(() => {
+        return game.situation === 'checkmate'
+    }, [game.situation])
+
     return (
         <div className="controls">
-            {isGameStart ? (
+            {isGameStart && !isCheckmate && (
                 <>
                     <Data game={game} />
                     <Options gameActions={gameActions} />
                 </>
-            ) : (
+            )}
+            {!isGameStart && !isCheckmate && (
                 <StartMenu gameActions={gameActions} />
             )}
+            {isCheckmate && <EndMenu gameActions={gameActions} />}
         </div>
     )
 }

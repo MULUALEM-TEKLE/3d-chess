@@ -24,6 +24,10 @@ export function Experience({ game, gameActions }: ExperienceProps) {
         return pieceUtils.getMoves(selectedPiece, game)
     }, [selectedPiece, game])
 
+    useEffect(() => {
+        setSelectedPiece(null)
+    }, [game])
+
     const toggleSelectedPiece = (pieceData: PieceData) => {
         if (
             selectedPiece &&
