@@ -7,7 +7,7 @@ type EndMenuProps = {
 export function EndMenu({ gameActions }: EndMenuProps) {
     return (
         <div className="end-menu">
-            <div className="title">Is checkmate</div>
+            <div className="title">Its checkmate</div>
             <button onClick={() => gameActions.startGame()}>Restart</button>
         </div>
     )
