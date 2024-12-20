@@ -12,7 +12,7 @@ The project incorporates the following technologies:
 
 * Next
 * React three fiber
-* zulstand
+* zustand
 * TypeScript
   
 ## Images
